@@ -1,8 +1,11 @@
 jdk:
   - openjdk17
 
+cache:
+  - lib/build/loom-cache
+
 before_install:
   - chmod +x gradlew
 
 install:
-  - ./gradlew clean -Pgroup=$GROUP -Pversion=$VERSION assemble :lib:publishToMavenLocal
+  - ./gradlew clean assemble :lib:publishToMavenLocal
