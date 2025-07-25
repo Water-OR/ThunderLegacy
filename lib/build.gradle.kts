@@ -1,4 +1,6 @@
 import dev.architectury.pack200.java.Pack200Adapter
+import groovy.util.Node
+import groovy.util.NodeList
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.utils.extendsFrom
@@ -184,6 +186,12 @@ publishing {
             artifact(tasks["sourcesJar"])
             artifact(tasks["javadocJar"])
             from(components["kotlin"])
+            
+            pom.withXml {
+                for (l in asNode()["dependencies"] as NodeList) for (d in (l as Node)["dependency"] as NodeList) {
+                    if (((d as Node)["artifactId"] as NodeList).any { "mixin-wrapper" == (it as Node).value() }) d.parent().remove(d)
+                }
+            }
         }
     }
 }
