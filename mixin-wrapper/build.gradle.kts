@@ -57,6 +57,7 @@ val combineMixinBundle by tasks.registering(ShadowJar::class) {
 tasks {
     withType<Jar> { enabled = name == combineMixinBundle.name }
     assemble { dependsOn(combineMixinBundle) }
+    publishToMavenLocal { enabled = false }
 }
 
 publishing {
