@@ -61,8 +61,6 @@ tasks {
 }
 
 publishing {
-    repositories {}
-    
     publications {
         register<MavenPublication>(project.name) {}
     }
