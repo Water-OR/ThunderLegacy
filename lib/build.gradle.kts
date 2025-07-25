@@ -19,7 +19,7 @@ val modTweaker = (property("tweaker") as String).trim().takeIf { !it.isEmpty() }
 
 val mixinConfig = "mixin.thunder-legacy.json"
 val mixinRefMap = "mixin.thunder-legacy.refmap.json"
-val mixinVersion = libs.versions.mixin
+val mixinVersion = libs.versions.mixin.asProvider().get()
 
 val accessTransformer = sourceSets.main.get().resources.srcDirs.firstNotNullOfOrNull {
     it.listFiles().firstOrNull { f -> f.isFile && f.name.endsWith("_at.cfg") }
