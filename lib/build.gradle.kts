@@ -83,7 +83,7 @@ val shade by configurations.registering {
 }
 
 val shadeRuntimeOnly by configurations.registering {
-    isCanBeConsumed = true
+    isCanBeConsumed = false
 }
 
 configurations {
