@@ -2,6 +2,7 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 plugins {
     alias(libs.plugins.shadow)
+    `maven-publish`
     java
 }
 
@@ -49,6 +50,8 @@ val combineMixinBundle by tasks.registering(ShadowJar::class) {
     exclude("META-INF/versions/**")
     relocate("com.google", "libs.com.google")
     enabled = true
+    
+    finalizedBy("generateMetadataFileForMixin-wrapperPublication")
 }
 
 tasks {
@@ -56,9 +59,11 @@ tasks {
     assemble { dependsOn(combineMixinBundle) }
     
     build { enabled = false }
-    
-    findByName("generateMetadataFileForMixin-wrapperPublication")?.apply {
-        dependsOn(combineMixinBundle)
+}
+
+publishing {
+    publications {
+        register<MavenPublication>(project.name) { }
     }
 }
 
