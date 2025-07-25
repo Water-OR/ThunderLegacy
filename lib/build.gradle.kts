@@ -94,7 +94,6 @@ repositories {
     maven("https://jitpack.io") {
         content { includeGroupByRegex("com\\.github\\.(.)+") }
     }
-    maven("https://maven.cleanroommc.com")
     maven("https://repo.spongepowered.org/repository/maven-public") {
         content { includeGroup("org.spongepowered") }
     }

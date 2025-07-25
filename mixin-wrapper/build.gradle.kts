@@ -38,7 +38,7 @@ dependencies {
     shade(libs.mixin.extras.common)
 }
 
-val combine by tasks.registering(ShadowJar::class) {
+val combineMixinBundle by tasks.registering(ShadowJar::class) {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     configurations = listOf(shade.get())
     exclude("META-INF/*.SF", "META-INF/*.RSA")
@@ -52,10 +52,14 @@ val combine by tasks.registering(ShadowJar::class) {
 }
 
 tasks {
-    withType<Jar> { enabled = name == combine.name }
-    assemble { dependsOn(combine) }
+    withType<Jar> { enabled = name == combineMixinBundle.name }
+    assemble { dependsOn(combineMixinBundle) }
+    
+    findByName("generateMetadataFileForMixin-wrapperPublication")?.apply {
+        enabled = false
+    }
 }
 
 artifacts {
-    add(bundle.name, combine)
+    add(bundle.name, combineMixinBundle)
 }
