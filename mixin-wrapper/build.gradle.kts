@@ -61,9 +61,7 @@ tasks {
 }
 
 publishing {
-    repositories {
-        mavenLocal()
-    }
+    repositories {}
     
     publications {
         register<MavenPublication>(project.name) {}
