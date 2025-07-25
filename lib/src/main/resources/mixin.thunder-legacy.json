@@ -1,0 +1,16 @@
+{
+    "package": "net.llvg.thunder.legacy.internal.mixin",
+    "refmap": "${refmap}",
+    "required": true,
+    "minVersion": "0.8",
+    "compatibilityLevel": "JAVA_8",
+    "client": [
+        "MixinMain",
+        "MixinMinecraft",
+        "MixinNetHandlerPlayClient"
+    ],
+    "mixins": [
+        "MixinForgeHooksClient",
+        "MixinNetworkDispatcher"
+    ]
+}
