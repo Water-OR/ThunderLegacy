@@ -2,15 +2,8 @@ package net.llvg.thunder.legacy.event
 
 import java.util.concurrent.locks.ReadWriteLock
 import java.util.concurrent.locks.ReentrantReadWriteLock
+import java.util.function.Consumer
 import kotlin.concurrent.withLock
-import kotlin.coroutines.CoroutineContext
-import kotlin.coroutines.EmptyCoroutineContext
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.joinAll
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import net.llvg.utilities.asExtending
 import net.llvg.utilities.asList
 import net.llvg.utilities.collection.MapWithDefault
@@ -22,54 +15,25 @@ import net.llvg.utilities.jClass
 object EventManager {
     private typealias EventType = Class<out Event>
     
-    private val scope = CoroutineScope(SupervisorJob())
-    
-    private val asyncListenersMap: MapWithDefault<EventType, Pair<ReadWriteLock, MutableList<EventListener.Async>>> =
-        MapWithDefault { ReentrantReadWriteLock() to ArrayList() }
-    
-    private val blockListenersMap: MapWithDefault<EventType, Pair<ReadWriteLock, MutableList<EventListener.Block>>> =
+    private val listenersMap: MapWithDefault<EventType, Pair<ReadWriteLock, MutableList<Consumer<in Event>>>> =
         MapWithDefault { ReentrantReadWriteLock() to ArrayList() }
     
     @JvmStatic
-    fun registerAsync(type: EventType, listener: EventListener.Async) {
-        asyncListenersMap.synchronizedGet(type).let { (lock, listeners) ->
+    fun register(type: EventType, listener: Consumer<in Event>) {
+        listenersMap.synchronizedGet(type).let { (lock, listeners) ->
             lock.writeLock().withLock { listeners += listener }
         }
     }
     
     @JvmStatic
-    fun registerBlock(type: EventType, listener: EventListener.Block) {
-        blockListenersMap.synchronizedGet(type).let { (lock, listeners) ->
-            lock.writeLock().withLock { listeners += listener }
-        }
-    }
-    
-    @JvmStatic
-    @JvmOverloads
-    fun post(type: EventType, event: Event, context: CoroutineContext = EmptyCoroutineContext): Job {
+    fun post(type: EventType, event: Event) {
         require(event.isInType(type)) {
             "Event $event is not in type '${type.name}'. This is not permitted."
         }
         
-        return runBlocking {
-            val jobs = mutableListOf<Job>()
-            val blocks = mutableListOf<suspend () -> Unit>()
-            EventTypeCache[type].map {
-                scope.launch(context) {
-                    asyncListenersMap.synchronizedGet(it).let { (lock, listeners) ->
-                        lock.readLock().withLock {
-                            for (l in listeners) l[event, jobs::add]
-                        }
-                    }
-                    blockListenersMap.synchronizedGet(it).let { (lock, listeners) ->
-                        lock.readLock().withLock {
-                            for (l in listeners) l[event, blocks::add]
-                        }
-                    }
-                }
-            }.joinAll()
-            blocks.forEach { it() }
-            scope.launch(context) { jobs.joinAll() }
+        EventTypeCache[type].forEach {
+            val (lock, listeners) = listenersMap.synchronizedGet(it)
+            lock.readLock().withLock { for (l in listeners) l.accept(event) }
         }
     }
     

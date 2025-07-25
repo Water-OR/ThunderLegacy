@@ -2,23 +2,18 @@
 
 package net.llvg.thunder.legacy.event
 
-import kotlin.coroutines.CoroutineContext
-import kotlin.coroutines.EmptyCoroutineContext
+import java.util.function.Consumer
 import kotlin.internal.InlineOnly
 import kotlin.internal.PureReifiable
 import net.llvg.utilities.jClass
 
 @InlineOnly
-inline fun <@PureReifiable reified E : Event> onEvent(
-    block: Boolean = false,
-    context: CoroutineContext = EmptyCoroutineContext,
-    noinline consumer: suspend (E) -> Unit,
-) = EventListenerDefault.of(jClass<E>(), block, context, consumer).apply { register() }
+inline fun <@PureReifiable reified E : Event> onEvent(consumer: Consumer<E>) =
+    EventListenerDefault.of(jClass<E>(), consumer).apply { register() }
 
 @InlineOnly
-inline fun <@PureReifiable reified E : Event> E.post(
-    context: CoroutineContext = EmptyCoroutineContext
-) = EventManager.post(jClass<E>(), this, context)
+inline fun <@PureReifiable reified E : Event> E.post() =
+    EventManager.post(jClass<E>(), this)
 
 @InlineOnly
 inline val <E : Event.Cancellable> E.asContext: CancelContext

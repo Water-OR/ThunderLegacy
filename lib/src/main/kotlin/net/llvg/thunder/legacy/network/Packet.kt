@@ -2,8 +2,6 @@
 
 package net.llvg.thunder.legacy.network
 
-import kotlin.coroutines.CoroutineContext
-import kotlin.coroutines.EmptyCoroutineContext
 import kotlin.internal.InlineOnly
 import kotlin.internal.PureReifiable
 import net.llvg.thunder.legacy.event.CancelContext
@@ -26,18 +24,14 @@ fun Packet<*>.sendNoEvent() {
 @InlineOnly
 @Suppress("UNUSED")
 inline fun <@PureReifiable reified P : Packet<*>> onPacketIn(
-    block: Boolean = false,
-    context: CoroutineContext = EmptyCoroutineContext,
-    noinline consumer: suspend context(CancelContext) (P) -> Unit,
-) = PacketListener.ofIn(jClass<P>(), block, context, consumer).apply { register() }
+    noinline consumer: context(CancelContext) (P) -> Unit,
+) = PacketListener.ofIn(jClass<P>(), consumer).apply { register() }
 
 @InlineOnly
 @Suppress("UNUSED")
 inline fun <@PureReifiable reified P : Packet<*>> onPacketOut(
-    block: Boolean = false,
-    context: CoroutineContext = EmptyCoroutineContext,
-    noinline consumer: suspend context(CancelContext) (P) -> Unit,
-) = PacketListener.ofOut(jClass<P>(), block, context, consumer).apply { register() }
+    noinline consumer: context(CancelContext) (P) -> Unit,
+) = PacketListener.ofOut(jClass<P>(), consumer).apply { register() }
 
 context(c: CancelContext)
 @InlineOnly

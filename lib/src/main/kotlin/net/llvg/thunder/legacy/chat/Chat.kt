@@ -2,9 +2,8 @@
 
 package net.llvg.thunder.legacy.chat
 
+import java.util.function.Consumer
 import java.util.regex.Pattern
-import kotlin.coroutines.CoroutineContext
-import kotlin.coroutines.EmptyCoroutineContext
 import kotlin.internal.InlineOnly
 import net.minecraft.util.ChatComponentText
 import net.minecraft.util.IChatComponent
@@ -13,19 +12,15 @@ import net.minecraft.util.IChatComponent
 @Suppress("UNUSED")
 inline fun onFormatChat(
     regex: Regex,
-    block: Boolean = false,
-    context: CoroutineContext = EmptyCoroutineContext,
-    noinline consumer: suspend (MatchResult) -> Unit,
-) = ChatListener.ofFormatted(regex, block, context, consumer).apply { register() }
+    consumer: Consumer<MatchResult>,
+) = ChatListener.ofFormatted(regex, consumer).apply { register() }
 
 @InlineOnly
 @Suppress("UNUSED")
 inline fun onUnformatChat(
     regex: Regex,
-    block: Boolean = false,
-    context: CoroutineContext = EmptyCoroutineContext,
-    noinline consumer: suspend (MatchResult) -> Unit,
-) = ChatListener.ofUnformatted(regex, block, context, consumer).apply { register() }
+    consumer: Consumer<MatchResult>,
+) = ChatListener.ofUnformatted(regex, consumer).apply { register() }
 
 @JvmField
 val mcTextFormatRegex: Pattern = Pattern.compile("(?i)§[0-9A-FK-OR]")

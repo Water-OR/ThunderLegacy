@@ -8,7 +8,6 @@ import java.util.Collections.*
 import java.util.WeakHashMap
 import net.llvg.thunder.legacy.event.post
 import net.llvg.thunder.legacy.network.PacketEvent
-import net.llvg.thunder.legacy.util.wait
 import net.minecraft.network.Packet
 
 @ChannelHandler.Sharable
@@ -22,7 +21,7 @@ internal object ThunderLegacyPacketHandler : ChannelDuplexHandler() {
     override fun channelRead(ctx: ChannelHandlerContext?, msg: Any?) {
         if (
             msg !is Packet<*> ||
-            !PacketEvent.Inbound.of(msg).apply { post().wait() }.cancelled
+            !PacketEvent.Inbound.of(msg).apply { post() }.cancelled
         ) super.channelRead(ctx, msg)
     }
     
@@ -30,7 +29,7 @@ internal object ThunderLegacyPacketHandler : ChannelDuplexHandler() {
         if (
             msg !is Packet<*> ||
             noEventPackets.remove(msg) !== null ||
-            !PacketEvent.Outbound.of(msg).apply { post().wait() }.cancelled
+            !PacketEvent.Outbound.of(msg).apply { post() }.cancelled
         ) super.write(ctx, msg, promise)
     }
 }

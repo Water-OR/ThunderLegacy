@@ -2,7 +2,6 @@ package net.llvg.thunder.legacy.internal.mixin_callback
 
 import net.llvg.thunder.legacy.event.post
 import net.llvg.thunder.legacy.render.RenderWorldEvent
-import net.llvg.thunder.legacy.util.wait
 import net.minecraft.client.renderer.RenderGlobal
 import org.joml.Matrix4f
 import org.lwjgl.BufferUtils.*
@@ -30,5 +29,5 @@ internal fun postRenderWorldEvent(
         playerMatrix,
         renderGlobal,
         partialTicks
-    ).post().wait()
+    ).post()
 }
