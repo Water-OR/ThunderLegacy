@@ -57,13 +57,15 @@ val combineMixinBundle by tasks.registering(ShadowJar::class) {
 tasks {
     withType<Jar> { enabled = name == combineMixinBundle.name }
     assemble { dependsOn(combineMixinBundle) }
-    
-    build { enabled = false }
 }
 
 publishing {
+    repositories {
+        mavenLocal()
+    }
+    
     publications {
-        register<MavenPublication>(project.name) { }
+        register<MavenPublication>(project.name) {}
     }
 }
 

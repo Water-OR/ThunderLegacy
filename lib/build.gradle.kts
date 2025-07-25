@@ -8,8 +8,10 @@ plugins {
     alias(libs.plugins.loom)
     alias(libs.plugins.shadow)
     `java-library`
+    `maven-publish`
 }
 
+val modArchive = (property("archive") as String).trim().replace(' ', '.')
 val modVersion = (property("version") as String).trim()
 val modTweaker = (property("tweaker") as String).trim().takeIf { !it.isEmpty() }
 
@@ -22,7 +24,7 @@ val accessTransformer = sourceSets.main.get().resources.srcDirs.firstNotNullOfOr
 
 group = "net.llvg"
 version = modVersion
-base.archivesName = "Thunder Legacy"
+base.archivesName = modArchive
 
 loom {
     runConfigs {
@@ -81,7 +83,7 @@ val shade by configurations.registering {
 }
 
 val shadeRuntimeOnly by configurations.registering {
-    isCanBeConsumed = false
+    isCanBeConsumed = true
 }
 
 configurations {
@@ -166,5 +168,22 @@ tasks {
             accessTransformer?.run { put("FMLAT", name) }
         }.let(manifest::attributes)
         finalizedBy(shadowJar)
+    }
+}
+
+publishing {
+    repositories {
+        mavenLocal()
+    }
+    
+    publications {
+        register<MavenPublication>("maven") {
+            artifactId = modArchive
+            artifact(tasks["jar"])
+            artifact(tasks["shadowJar"])
+            artifact(tasks["sourcesJar"])
+            artifact(tasks["javadocJar"])
+            from(components["kotlin"])
+        }
     }
 }
