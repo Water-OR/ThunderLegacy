@@ -1,9 +1,6 @@
 jdk:
   - openjdk17
 
-cache:
-  - lib/build/loom-cache
-
 before_install:
   - chmod +x gradlew
 
