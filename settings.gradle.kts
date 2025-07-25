@@ -10,5 +10,4 @@ pluginManagement {
     }
 }
 
-include(":mixin-wrapper")
 include(":lib")

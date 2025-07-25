@@ -36,7 +36,7 @@ dependencies {
         exclude(group = "com.google.guava")
         exclude(group = "com.google.code.gson")
     }
-    shade(libs.mixin.extras.common)
+    shade(libs.mixin.extras)
 }
 
 val combineMixinBundle by tasks.registering(ShadowJar::class) {

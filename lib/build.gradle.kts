@@ -19,6 +19,7 @@ val modTweaker = (property("tweaker") as String).trim().takeIf { !it.isEmpty() }
 
 val mixinConfig = "mixin.thunder-legacy.json"
 val mixinRefMap = "mixin.thunder-legacy.refmap.json"
+val mixinVersion = libs.versions.mixin
 
 val accessTransformer = sourceSets.main.get().resources.srcDirs.firstNotNullOfOrNull {
     it.listFiles().firstOrNull { f -> f.isFile && f.name.endsWith("_at.cfg") }
@@ -86,6 +87,7 @@ val shade by configurations.registering {
 
 val shadeRuntimeOnly by configurations.registering {
     isCanBeConsumed = false
+    isTransitive = true
 }
 
 configurations {
@@ -106,7 +108,6 @@ repositories {
     }
 }
 
-@Suppress("UnstableApiUsage")
 dependencies {
     minecraft("com.mojang:minecraft:1.8.9")
     mappings("de.oceanlabs.mcp:mcp_stable:22-1.8.9")
@@ -123,14 +124,12 @@ dependencies {
         exclude(group = "com.google.guava")
         exclude(group = "com.google.code.gson")
     }
-    compileOnly(libs.mixin.extras.common)
+    compileOnly(libs.mixin.extras)
     
-    shadeRuntimeOnly(project(":mixin-wrapper", "bundle"))
+    shadeRuntimeOnly(libs.mixin.wrapper)
     
-    libs.mixin.asProvider().get().run {
-        annotationProcessor(group, name, version, classifier = "processor")
-    }
-    annotationProcessor(libs.mixin.extras.common)
+    annotationProcessor("org.spongepowered:mixin:$mixinVersion:processor")
+    annotationProcessor(libs.mixin.extras)
 }
 
 tasks {
