@@ -55,8 +55,10 @@ tasks {
     withType<Jar> { enabled = name == combineMixinBundle.name }
     assemble { dependsOn(combineMixinBundle) }
     
+    build { enabled = false }
+    
     findByName("generateMetadataFileForMixin-wrapperPublication")?.apply {
-        enabled = false
+        dependsOn(combineMixinBundle)
     }
 }
 
