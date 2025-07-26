@@ -2,9 +2,11 @@ package net.llvg.thunder.legacy.internal.mixin;
 
 import net.llvg.thunder.legacy.internal.Internal;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.profiler.IPlayerUsage;
 import net.minecraft.util.IThreadListener;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Slice;
@@ -16,6 +18,9 @@ import static net.llvg.thunder.legacy.internal.mixin_callback.CallbackMixinMinec
 public abstract class MixinMinecraft
   implements IThreadListener, IPlayerUsage
 {
+    @Shadow
+    public WorldClient theWorld;
+    
     @Inject (
       method = "startGame",
       at = @At ("TAIL")
@@ -57,5 +62,13 @@ public abstract class MixinMinecraft
     )
     private void runGameLoopInject(CallbackInfo ci) {
         postGameLoopEvent();
+    }
+    
+    @Inject (
+      method = "loadWorld(Lnet/minecraft/client/multiplayer/WorldClient;Ljava/lang/String;)V",
+      at = @At (value = "HEAD")
+    )
+    private void loadWorldInject(WorldClient worldClientIn, String loadingMessage, CallbackInfo ci) {
+        postWorldChangeEvent(theWorld, worldClientIn);
     }
 }
