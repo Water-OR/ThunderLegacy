@@ -4,14 +4,13 @@ import java.util.function.Consumer
 import net.llvg.utilities.asTyped
 
 abstract class AbstractEventListener<E : Event>(
-    val type: Class<out E>
-) : Consumer<Event> {
-    final override fun accept(event: Event) {
-        run(event.asTyped(type) ?: return)
+    protected val type: Class<out E>
+) : EventListener {
+    final override fun get(event: Event, collector: Consumer<Runnable>) {
+        accept(event.asTyped(type) ?: return, collector)
     }
     
-    protected abstract fun run(event: E)
+    protected abstract fun accept(event: E, collector: Consumer<Runnable>)
     
-    @Synchronized
     fun register() = EventManager.register(type, this)
 }

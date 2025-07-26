@@ -2,7 +2,6 @@ package net.llvg.thunder.legacy.event
 
 import java.util.concurrent.locks.ReadWriteLock
 import java.util.concurrent.locks.ReentrantReadWriteLock
-import java.util.function.Consumer
 import kotlin.concurrent.withLock
 import net.llvg.utilities.asExtending
 import net.llvg.utilities.asList
@@ -15,14 +14,13 @@ import net.llvg.utilities.jClass
 object EventManager {
     private typealias EventType = Class<out Event>
     
-    private val listenersMap: MapWithDefault<EventType, Pair<ReadWriteLock, MutableList<Consumer<in Event>>>> =
-        MapWithDefault { ReentrantReadWriteLock() to ArrayList() }
+    private val listenersMap =
+        MapWithDefault<EventType, Pair<ReadWriteLock, MutableList<EventListener>>> { ReentrantReadWriteLock() to ArrayList() }
     
     @JvmStatic
-    fun register(type: EventType, listener: Consumer<in Event>) {
-        listenersMap.synchronizedGet(type).let { (lock, listeners) ->
-            lock.writeLock().withLock { listeners += listener }
-        }
+    fun register(type: EventType, listener: EventListener) {
+        val (lock, listeners) = listenersMap.synchronizedGet(type)
+        lock.writeLock().withLock { listeners += listener }
     }
     
     @JvmStatic
@@ -31,10 +29,12 @@ object EventManager {
             "Event $event is not in type '${type.name}'. This is not permitted."
         }
         
+        val actions = mutableListOf<Runnable>()
         EventTypeCache[type].forEach {
             val (lock, listeners) = listenersMap.synchronizedGet(it)
-            lock.readLock().withLock { for (l in listeners) l.accept(event) }
+            lock.readLock().withLock { for (l in listeners) l[event, actions::add] }
         }
+        actions.forEach { it.run() }
     }
     
     private object EventTypeCache {

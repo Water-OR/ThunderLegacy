@@ -2,7 +2,7 @@ package net.llvg.thunder.legacy.forge
 
 import net.llvg.thunder.legacy.event.Event
 
-interface ForgeEventEvent : Event {
+sealed interface ForgeEventEvent : Event {
     val event: ForgeEvent
     
     companion object {

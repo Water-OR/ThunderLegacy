@@ -1,6 +1,7 @@
 package net.llvg.thunder.legacy.network
 
 import java.util.function.BiConsumer
+import java.util.function.Consumer
 import net.llvg.thunder.legacy.event.AbstractEventListener
 import net.llvg.thunder.legacy.event.CancelContext
 import net.llvg.thunder.legacy.event.asContext
@@ -14,10 +15,10 @@ private constructor(
     private val pType: Class<out P>,
     private val action: BiConsumer<CancelContext, P>,
 ) : AbstractEventListener<E>(type) {
-    override fun run(event: E) {
-        val packetTyped = event.asTyped(pType)
+    override fun accept(event: E, collector: Consumer<Runnable>) {
+        val packetTyped = event.packet.asTyped(pType)
         packetTyped ?: return
-        action.accept(event.asContext, packetTyped)
+        collector.accept { action.accept(event.asContext, packetTyped) }
     }
     
     companion object {

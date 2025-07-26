@@ -1,6 +1,4 @@
 import dev.architectury.pack200.java.Pack200Adapter
-import groovy.util.Node
-import groovy.util.NodeList
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.utils.extendsFrom
@@ -13,12 +11,12 @@ plugins {
     `maven-publish`
 }
 
-val modArchive = (property("archive") as String).trim().replace(' ', '.')
+val modArchive = (property("archive") as String).trim().replace(' ', '_')
 val modVersion = (property("version") as String).trim()
 val modTweaker = (property("tweaker") as String).trim().takeIf { !it.isEmpty() }
 
-val mixinConfig = "mixin.thunder-legacy.json"
-val mixinRefMap = "mixin.thunder-legacy.refmap.json"
+val mixinConfig = (property("mixin_config") as String).trim().run { if (isEmpty()) emptyList() else split('|').map { it.trim() } }
+val mixinRefMap = (property("mixin_refmap") as String).trim().takeIf { !mixinConfig.isEmpty() }
 val mixinVersion = libs.versions.mixin.asProvider().get()
 
 val accessTransformer = sourceSets.main.get().resources.srcDirs.firstNotNullOfOrNull {
@@ -42,7 +40,7 @@ loom {
     
     forge {
         pack200Provider = Pack200Adapter()
-        mixinConfig(mixinConfig)
+        mixinConfig(*mixinConfig.toTypedArray())
         accessTransformer?.let(::accessTransformer)
     }
     
@@ -140,6 +138,7 @@ tasks {
         filesMatching(mixinConfig) {
             expand("refmap" to mixinRefMap)
         }
+        rename("(.+_at.cfg)", "META-INF/$1")
     }
     
     shadowJar {
@@ -148,7 +147,6 @@ tasks {
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
         
         exclude("META-INF/versions/**")
-        
         mergeServiceFiles()
     }
     
@@ -169,28 +167,5 @@ tasks {
             accessTransformer?.run { put("FMLAT", name) }
         }.let(manifest::attributes)
         finalizedBy(shadowJar)
-    }
-}
-
-publishing {
-    repositories {
-        mavenLocal()
-    }
-    
-    publications {
-        register<MavenPublication>("maven") {
-            artifactId = modArchive
-            artifact(tasks["jar"])
-            artifact(tasks["shadowJar"])
-            artifact(tasks["sourcesJar"])
-            artifact(tasks["javadocJar"])
-            from(components["kotlin"])
-            
-            pom.withXml {
-                for (l in asNode()["dependencies"] as NodeList) for (d in (l as Node)["dependency"] as NodeList) {
-                    if (((d as Node)["artifactId"] as NodeList).any { "mixin-wrapper" == (it as Node).value() }) d.parent().remove(d)
-                }
-            }
-        }
     }
 }

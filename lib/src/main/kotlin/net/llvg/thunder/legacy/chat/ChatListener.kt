@@ -10,8 +10,10 @@ sealed class ChatListener(
     private val regex: Regex,
     private val action: Consumer<MatchResult>,
 ) : AbstractEventListener<ChatEvent>(jClass()) {
-    override fun run(event: ChatEvent) {
-        action.accept(regex.find(textToString(event.text)) ?: return)
+    override fun accept(event: ChatEvent, collector: Consumer<Runnable>) {
+        val matchResult = regex.find(textToString(event.text))
+        matchResult ?: return
+        collector.accept { action.accept(matchResult) }
     }
     
     protected abstract fun textToString(text: IChatComponent): String
