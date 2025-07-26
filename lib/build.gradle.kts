@@ -7,6 +7,7 @@ plugins {
     kotlin("jvm") version libs.versions.kotlin
     alias(libs.plugins.loom)
     alias(libs.plugins.shadow)
+    `maven-publish`
     `java-library`
 }
 
@@ -166,5 +167,19 @@ tasks {
             accessTransformer?.run { put("FMLAT", name) }
         }.let(manifest::attributes)
         finalizedBy(shadowJar)
+    }
+}
+
+publishing {
+    repositories { mavenLocal() }
+    publications {
+        register<MavenPublication>("maven") {
+            artifactId = modArchive
+            artifact(tasks["jar"])
+            artifact(tasks["shadowJar"])
+            artifact(tasks["sourcesJar"])
+            artifact(tasks["javadocJar"])
+            from(components["kotlin"])
+        }
     }
 }
