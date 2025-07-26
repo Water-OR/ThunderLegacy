@@ -8,7 +8,6 @@ plugins {
     alias(libs.plugins.loom)
     alias(libs.plugins.shadow)
     `java-library`
-    `maven-publish`
 }
 
 val modArchive = (property("archive") as String).trim().replace(' ', '_')
