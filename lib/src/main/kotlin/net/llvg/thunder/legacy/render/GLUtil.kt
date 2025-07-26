@@ -16,7 +16,6 @@ import org.lwjgl.opengl.GL11.*
 import org.lwjgl.opengl.GL20.*
 
 @InlineOnly
-@Suppress("UNUSED")
 fun <R> glHoldAttrib(mask: Int, action: () -> R): R {
     contract {
         callsInPlace(action, InvocationKind.EXACTLY_ONCE)
@@ -28,6 +27,30 @@ fun <R> glHoldAttrib(mask: Int, action: () -> R): R {
     } finally {
         glPopAttrib()
     }
+}
+
+@InlineOnly
+fun <R> glHoldMatrix(action: () -> R): R {
+    contract {
+        callsInPlace(action, InvocationKind.EXACTLY_ONCE)
+    }
+    
+    glPushMatrix()
+    try {
+        return action()
+    } finally {
+        glPopMatrix()
+    }
+}
+
+@InlineOnly
+@Suppress("UNUSED")
+fun <R> glHoldAttribAndMatrix(mask: Int, action: () -> R): R {
+    contract {
+        callsInPlace(action, InvocationKind.EXACTLY_ONCE)
+    }
+    
+    return glHoldAttrib(mask) { glHoldMatrix(action) }
 }
 
 fun glGetProgramInfoLog(program: Int): String =
@@ -49,16 +72,19 @@ fun glUniform4(location: Int, vector: Vector4f) =
     glUniform4f(location, vector.x, vector.y, vector.z, vector.w)
 
 private val bufferMatrix2 = createFloatBuffer(4)
+
 @Suppress("UNUSED")
 fun glUniformMatrix2(location: Int, transpose: Boolean, matrix: Matrix2f) =
     glUniformMatrix2(location, transpose, matrix[bufferMatrix2])
 
 private val bufferMatrix3 = createFloatBuffer(9)
+
 @Suppress("UNUSED")
 fun glUniformMatrix3(location: Int, transpose: Boolean, matrix: Matrix3f) =
     glUniformMatrix3(location, transpose, matrix[bufferMatrix3])
 
 private val bufferMatrix4 = createFloatBuffer(16)
+
 @Suppress("UNUSED")
 fun glUniformMatrix4(location: Int, transpose: Boolean, matrix: Matrix4f) =
     glUniformMatrix4(location, transpose, matrix[bufferMatrix4])
