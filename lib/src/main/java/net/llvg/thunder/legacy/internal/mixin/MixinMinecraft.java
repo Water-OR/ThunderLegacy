@@ -7,6 +7,7 @@ import net.minecraft.util.IThreadListener;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Slice;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import static net.llvg.thunder.legacy.internal.mixin_callback.CallbackMixinMinecraftKt.*;
@@ -37,5 +38,24 @@ public abstract class MixinMinecraft
                 // Do nothing
             }
         }
+    }
+    
+    @Inject (
+      method = "runGameLoop",
+      at = @At (
+        value = "INVOKE",
+        target = "Lnet/minecraft/profiler/Profiler;startSection(Ljava/lang/String;)V",
+        shift = At.Shift.AFTER,
+        ordinal = 0
+      ),
+      slice = @Slice (
+        from = @At (
+          value = "CONSTANT",
+          args = "stringValue=tick"
+        )
+      )
+    )
+    private void runGameLoopInject(CallbackInfo ci) {
+        postGameLoopEvent();
     }
 }
