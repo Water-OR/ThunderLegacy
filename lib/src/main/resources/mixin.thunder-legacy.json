@@ -10,6 +10,7 @@
         "MixinNetHandlerPlayClient"
     ],
     "mixins": [
+        "MixinChunk",
         "MixinEventBus",
         "MixinForgeHooksClient",
         "MixinNetworkDispatcher"
