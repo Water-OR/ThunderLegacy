@@ -23,8 +23,9 @@ private constructor(
     val map: String?,
 ) {
     companion object {
-        private var instance: HypixelLocation? = null
-            set(value) {
+        @JvmStatic
+        var instance: HypixelLocation? = null
+            private set(value) {
                 if (field == value) return
                 HypixelLocationChangeEvent.of(field, value).post()
                 field = value
