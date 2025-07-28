@@ -80,7 +80,7 @@ kotlin.compilerOptions {
 }
 
 val shade by configurations.registering {
-    isCanBeConsumed = false
+    isCanBeConsumed = true
 }
 
 val shadeRuntimeOnly by configurations.registering {
@@ -145,6 +145,7 @@ tasks {
             expand("refmap" to mixinRefMap)
         }
         rename("(.+_at.cfg)", "META-INF/$1")
+        dependsOn(compileJava)
     }
     
     shadowJar {
@@ -152,7 +153,10 @@ tasks {
         configurations = listOf(shade, shadeRuntimeOnly).map { it.get() }
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
         
-        relocate("net.hypixel.modapi.tweaker", "net.llvg.thunder.legacy.internal.tweak")
+        relocate(
+            "net.hypixel.modapi.tweaker.HypixelModAPITweaker",
+            "net.llvg.thunder.legacy.internal.tweak.HypixelModAPITweaker",
+        )
         exclude("META-INF/versions/**")
         mergeServiceFiles()
     }
