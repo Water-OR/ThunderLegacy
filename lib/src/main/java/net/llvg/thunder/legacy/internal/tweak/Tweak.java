@@ -3,8 +3,10 @@ package net.llvg.thunder.legacy.internal.tweak;
 import com.llamalad7.mixinextras.MixinExtrasBootstrap;
 import java.io.File;
 import java.util.List;
+import net.hypixel.modapi.tweaker.HypixelModAPITweaker;
 import net.minecraft.launchwrapper.ITweaker;
 import net.minecraft.launchwrapper.LaunchClassLoader;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.launch.MixinTweaker;
 
@@ -27,7 +29,7 @@ public final class Tweak
             isFirst = false;
         }
         else meIsFirst = false;
-        mixinTweak = meIsFirst && nonMixinTweaker() ? new MixinTweaker() : null;
+        mixinTweak = meIsFirst && !getBlackboardTweaks().contains(MixinTweaker.class.getName()) ? new MixinTweaker() : null;
     }
     
     @Override
@@ -37,7 +39,9 @@ public final class Tweak
       File assetsDir,
       String profile
     ) {
-        addOtherTweakers();
+        List<@NotNull String> tweaks = getBlackboardTweaks();
+        tweaks.add(MixinTweaker.class.getName());
+        tweaks.add(HypixelModAPITweaker.class.getName());
         
         if (mixinTweak == null) return;
         mixinTweak.acceptOptions(args, gameDir, assetsDir, profile);
