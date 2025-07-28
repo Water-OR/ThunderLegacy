@@ -1,5 +1,5 @@
 [versions]
-loom = "1.9+"
+loom = "1.10+"
 kotlin = "2.2.0"
 kotlinx-coroutines = "1.10.2"
 shadow = "8.3.8"
@@ -7,10 +7,11 @@ mixin = "0.8.7"
 mixin-extras = "0.4.1"
 mixin-fabric = "0.16.1+"
 mixin-wrapper = "0.8.7-0.16.1-0.4.1"
-llvgUtils = "4.0.2"
+llvg-utils = "4.0.2"
 joml = "1.10.8"
-tweakerFix = "1.1"
-devAuth = "1.2.1"
+tweaker-fix = "1.1"
+dev-auth = "1.2.1"
+hypixel-mod-api-forge = "1.0.1.2"
 
 [plugins]
 loom = { id = "gg.essential.loom", version.ref = "loom" }
@@ -23,10 +24,12 @@ kt-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutin
 mixin-fabric = { group = "net.fabricmc", name = "sponge-mixin", version.ref = "mixin-fabric" }
 mixin-extras = { group = "io.github.llamalad7", name = "mixinextras-common", version.ref = "mixin-extras" }
 mixin-wrapper = { group = "com.github.Water-OR", name = "LegacyMixinWrapper", version.ref = "mixin-wrapper" }
-llvgUtils = { group = "com.github.Water-OR", name = "llvg-utils", version.ref = "llvgUtils" }
+llvg-utils = { group = "com.github.Water-OR", name = "llvg-utils", version.ref = "llvg-utils" }
 joml = { group = "org.joml", name = "joml", version.ref = "joml" }
-tweakerFix = { group = "com.github.Water-OR", name = "MCTweakerDevEnvFix", version.ref = "tweakerFix" }
-devAuth = { group = "me.djtheredstoner", name = "DevAuth-forge-legacy", version.ref = "devAuth" }
+tweaker-fix = { group = "com.github.Water-OR", name = "MCTweakerDevEnvFix", version.ref = "tweaker-fix" }
+dev-auth = { group = "me.djtheredstoner", name = "DevAuth-forge-legacy", version.ref = "dev-auth" }
+hypixel-mod-api-forge-core = { group = "net.hypixel", name = "mod-api-forge", version.ref = "hypixel-mod-api-forge" }
+hypixel-mod-api-forge-tweaker = { group = "net.hypixel", name = "mod-api-forge-tweaker", version.ref = "hypixel-mod-api-forge" }
 
 [bundles]
 kotlin = ["kt-stdlib", "kt-reflect", "kt-coroutines-core"]

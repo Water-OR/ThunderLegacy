@@ -8,6 +8,9 @@ import net.llvg.utilities.collection.MapWithDefault
 import net.llvg.utilities.jClass
 
 object ForgeEventManager {
+    private val listenersMap =
+        MapWithDefault<Class<out ForgeEvent>, Pair<ReadWriteLock, MutableList<ForgeEventListener>>> { ReentrantReadWriteLock() to ArrayList() }
+    
     init {
         EventManager.register(jClass<ForgeEventEvent>()) { event, collector ->
             if (event !is ForgeEventEvent) return@register
@@ -16,9 +19,6 @@ object ForgeEventManager {
             lock.readLock().withLock { for (l in listeners) l[forgeEvent, collector] }
         }
     }
-    
-    private val listenersMap =
-        MapWithDefault<Class<out ForgeEvent>, Pair<ReadWriteLock, MutableList<ForgeEventListener>>> { ReentrantReadWriteLock() to ArrayList() }
     
     @JvmStatic
     fun register(type: Class<out ForgeEvent>, listener: ForgeEventListener) {

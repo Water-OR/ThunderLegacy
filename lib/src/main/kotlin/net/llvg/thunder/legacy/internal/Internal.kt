@@ -2,6 +2,8 @@ package net.llvg.thunder.legacy.internal
 
 import net.llvg.thunder.legacy.event.EventManager
 import net.llvg.thunder.legacy.event.onEvent
+import net.llvg.thunder.legacy.hypixel.HypixelLocation
+import net.llvg.thunder.legacy.hypixel.HypixelModAPIHelper
 import net.llvg.thunder.legacy.util.log4jLogger
 import net.llvg.thunder.legacy.vanilla.MinecraftInstantiationEvent
 import net.llvg.utilities.jClass
@@ -22,6 +24,8 @@ internal object Internal {
         )
         
         EventManager
+        HypixelModAPIHelper
+        HypixelLocation
         
         onEvent<MinecraftInstantiationEvent> {
             logger.info("[ThunderLegacy] Welcome to minecraft")

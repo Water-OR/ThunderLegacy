@@ -10,11 +10,11 @@ abstract class AbstractEventListener<E : Event>(
 ) : EventListener {
     protected var activeSupplier = TrueSupplier.of()
     
+    protected abstract fun accept(event: E, collector: Consumer<Runnable>)
+    
     final override fun get(event: Event, collector: Consumer<Runnable>) {
         if (activeSupplier.asBoolean) accept(event.asTyped(type) ?: return, collector)
     }
-    
-    protected abstract fun accept(event: E, collector: Consumer<Runnable>)
     
     fun register() = EventManager.register(type, this)
     

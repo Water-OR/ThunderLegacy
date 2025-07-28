@@ -12,19 +12,17 @@ import net.llvg.utilities.isInType
 import net.llvg.utilities.jClass
 
 object EventManager {
-    private typealias EventType = Class<out Event>
-    
     private val listenersMap =
-        MapWithDefault<EventType, Pair<ReadWriteLock, MutableList<EventListener>>> { ReentrantReadWriteLock() to ArrayList() }
+        MapWithDefault<Class<out Event>, Pair<ReadWriteLock, MutableList<EventListener>>> { ReentrantReadWriteLock() to ArrayList() }
     
     @JvmStatic
-    fun register(type: EventType, listener: EventListener) {
+    fun register(type: Class<out Event>, listener: EventListener) {
         val (lock, listeners) = listenersMap.synchronizedGet(type)
         lock.writeLock().withLock { listeners += listener }
     }
     
     @JvmStatic
-    fun post(type: EventType, event: Event) {
+    fun post(type: Class<out Event>, event: Event) {
         require(event.isInType(type)) {
             "Event $event is not in type '${type.name}'. This is not permitted."
         }
@@ -40,9 +38,9 @@ object EventManager {
     private object EventTypeCache {
         private val classEventType = jClass<Event>()
         
-        private val supertypesMap: MutableMap<EventType, Collection<EventType>> = HashMap()
+        private val supertypesMap: MutableMap<Class<out Event>, Collection<Class<out Event>>> = HashMap()
         
-        private fun build(type: EventType): Collection<EventType> = buildSet {
+        private fun build(type: Class<out Event>): Collection<Class<out Event>> = buildSet {
             add(type)
             
             type.superclass?.asExtending(classEventType)
@@ -52,7 +50,7 @@ object EventManager {
               ?.let { addAll(supertypesMap[it] ?: build(it)) }
         }.toTypedArray().asList.unmodifiable.let { supertypesMap.putIfAbsent(type, it) ?: it }
         
-        operator fun get(type: EventType): Collection<EventType> =
+        operator fun get(type: Class<out Event>): Collection<Class<out Event>> =
             supertypesMap.synchronizedGetOrPut(type) { build(type) }
     }
 }

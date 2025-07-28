@@ -25,13 +25,13 @@ fun Packet<*>.sendNoEvent() {
 @Suppress("UNUSED")
 inline fun <@PureReifiable reified P : Packet<*>> onPacketIn(
     noinline consumer: context(CancelContext) (P) -> Unit,
-) = PacketListener.ofIn(jClass<P>(), consumer).apply { register() }
+) = PacketEventListenerDefault.ofIn(jClass<P>(), consumer).apply { register() }
 
 @InlineOnly
 @Suppress("UNUSED")
 inline fun <@PureReifiable reified P : Packet<*>> onPacketOut(
     noinline consumer: context(CancelContext) (P) -> Unit,
-) = PacketListener.ofOut(jClass<P>(), consumer).apply { register() }
+) = PacketEventListenerDefault.ofOut(jClass<P>(), consumer).apply { register() }
 
 context(c: CancelContext)
 @InlineOnly

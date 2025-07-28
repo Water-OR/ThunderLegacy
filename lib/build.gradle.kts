@@ -104,6 +104,9 @@ repositories {
     maven("https://pkgs.dev.azure.com/djtheredstoner/DevAuth/_packaging/public/maven/v1") {
         content { includeGroup("me.djtheredstoner") }
     }
+    maven("https://repo.hypixel.net/repository/Hypixel") {
+        content { includeGroup("net.hypixel") }
+    }
 }
 
 dependencies {
@@ -111,12 +114,15 @@ dependencies {
     mappings("de.oceanlabs.mcp:mcp_stable:22-1.8.9")
     forge("net.minecraftforge:forge:1.8.9-11.15.1.2318-1.8.9")
     
-    modRuntimeOnly(libs.devAuth)
+    modRuntimeOnly(libs.dev.auth)
     
     shade(libs.bundles.kotlin)
-    shade(libs.llvgUtils)
-    shade(libs.tweakerFix)
+    shade(libs.llvg.utils)
+    shade(libs.tweaker.fix)
     shade(libs.joml)
+    
+    compileOnly(libs.hypixel.mod.api.forge.core)
+    shade(libs.hypixel.mod.api.forge.tweaker)
     
     compileOnly(libs.mixin.fabric) {
         exclude(group = "com.google.guava")

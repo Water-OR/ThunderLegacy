@@ -14,7 +14,7 @@ private constructor(
         @JvmStatic
         fun <E : ForgeEvent> of(
             clazz: Class<out E>,
-            action: Consumer<E>
+            action: Consumer<E>,
         ) = ForgeEventListenerDefault(clazz, action)
     }
 }
