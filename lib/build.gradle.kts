@@ -88,8 +88,9 @@ val shadeRuntimeOnly by configurations.registering {
 }
 
 configurations {
-    implementation.extendsFrom(shade)
-    runtimeOnly.extendsFrom(shadeRuntimeOnly)
+    runtimeClasspath.extendsFrom(shade)
+    compileClasspath.extendsFrom(shade)
+    runtimeClasspath.extendsFrom(shadeRuntimeOnly)
 }
 
 repositories {
