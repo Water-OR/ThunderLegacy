@@ -27,7 +27,7 @@ public final class Tweak
             isFirst = false;
         }
         else meIsFirst = false;
-        mixinTweak = meIsFirst ? new MixinTweaker() : null;
+        mixinTweak = meIsFirst && nonMixinTweaker() ? new MixinTweaker() : null;
     }
     
     @Override
@@ -37,6 +37,8 @@ public final class Tweak
       File assetsDir,
       String profile
     ) {
+        addOtherTweakers();
+        
         if (mixinTweak == null) return;
         mixinTweak.acceptOptions(args, gameDir, assetsDir, profile);
         MixinExtrasBootstrap.init();

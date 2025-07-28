@@ -152,6 +152,7 @@ tasks {
         configurations = listOf(shade, shadeRuntimeOnly).map { it.get() }
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
         
+        relocate("net.hypixel.modapi.tweaker", "net.llvg.thunder.legacy.internal.tweak")
         exclude("META-INF/versions/**")
         mergeServiceFiles()
     }
