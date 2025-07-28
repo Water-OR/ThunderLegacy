@@ -80,12 +80,11 @@ kotlin.compilerOptions {
 }
 
 val shade by configurations.registering {
-    isCanBeConsumed = true
+    isCanBeConsumed = false
 }
 
 val shadeRuntimeOnly by configurations.registering {
     isCanBeConsumed = false
-    isTransitive = true
 }
 
 configurations {
