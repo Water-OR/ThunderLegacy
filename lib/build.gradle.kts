@@ -88,15 +88,17 @@ val shadeRuntimeOnly by configurations.registering {
 }
 
 configurations {
-    runtimeClasspath.extendsFrom(shade)
-    compileClasspath.extendsFrom(shade)
-    runtimeClasspath.extendsFrom(shadeRuntimeOnly)
+    implementation.extendsFrom(shade)
+    runtimeOnly.extendsFrom(shadeRuntimeOnly)
 }
 
 repositories {
     mavenCentral()
     maven("https://jitpack.io") {
-        content { includeGroupByRegex("com\\.github\\.(.)+") }
+        content {
+            includeGroup("net.llvg")
+            includeGroupByRegex("com\\.github\\.(.)+")
+        }
     }
     maven("https://repo.spongepowered.org/repository/maven-public") {
         content { includeGroup("org.spongepowered") }
